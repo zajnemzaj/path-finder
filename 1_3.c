@@ -6,7 +6,7 @@
 
 #define MMERET 10// tábla méret
 //#define p 0.3 // p valószínűség
-#define ismetles 100
+#define ismetles 1
 
 #define max(a,b) (a>b?a:b)
 
@@ -17,6 +17,8 @@ void matrixkiiratas(int fmatrix[MMERET][MMERET]);
 void vektorfeltoltes(int fvektor[MMERET]);
 
 void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET]);
+
+void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET]);
 
 int main(void) 
 {
@@ -37,7 +39,10 @@ int main(void)
 		for (int i = 0; i < ismetles; i++)
 		{
 			matrixfeltoltes(matrix,p);
+			matrixkiiratas(matrix);
 			bejaras(matrix,segedvektor);
+			matrixkiiratas(matrix);
+			clusterjoin(matrix,segedvektor);
 		}
 		seged = atmente;
 		valosz = seged / ismetles * 100;
@@ -46,6 +51,11 @@ int main(void)
 	}
 	fclose(fp);
 	return 0;
+}
+
+void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET])
+{
+	
 }
 
 void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET])
@@ -57,7 +67,7 @@ void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET])
 			{                        // if occupied ...
 				int up = (i==0 ? 0 : fmatrix[i-1][j]);    //  look up  
 				int left = (j==0 ? 0 : fmatrix[i][j-1]);  //  look left
-	
+	 
 				switch (!!up + !!left)
 				{
 					case 0:
@@ -116,4 +126,5 @@ void matrixkiiratas(int fmatrix[MMERET][MMERET])
 		}
 		printf("\n");
 	}
+	printf("\n\n");
 }
