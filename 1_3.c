@@ -14,20 +14,22 @@ void matrixfeltoltes(int fmatrix[MMERET][MMERET], float fp);
 
 void matrixkiiratas(int fmatrix[MMERET][MMERET]);
 
-void vektorfeltoltes(int fvektor[MMERET]);
+void vektorfeltoltes(int fvektor[2][MMERET*2]);
 
-void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2]);
+void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2]);
 
-void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2]);
+void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2]);
 
-int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2]);
+int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2]);
+
+void matrixkiiratas2(int fsegedvektor[2][MMERET*2]);
 
 int main(void) 
 {
 	int matrix[MMERET][MMERET], atmente;
-	int segedvektor[MMERET*2];
+	int segedvektor[2][MMERET*2];
 	srand ( time(NULL) );
-	float seged, valosz;
+	float valosz;
 	FILE *fp;
 	fp = fopen("1_3.txt", "w+");
 	 
@@ -44,20 +46,31 @@ int main(void)
 			matrixkiiratas(matrix);
 			bejaras(matrix,segedvektor);
 			matrixkiiratas(matrix);
-			atmente += eldont(matrix,segedvektor);
 			clusterjoin(matrix,segedvektor);
+			atmente += eldont(matrix,segedvektor);
 			matrixkiiratas(matrix);
+			matrixkiiratas2(segedvektor);
 		}
-		seged = atmente;
-		valosz = seged / ismetles * 100;
+		valosz = (float)atmente / (float)ismetles * 100;
 		printf("Sikeres átjárások %.1f szórásvalószínűség mellett: %.2f szazalek \n",p,valosz);
 		fprintf( fp, "%.2f %.2f\n", p, valosz);
 	}
+	
 	fclose(fp);
 	return 0;
 }
 
-int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
+void matrixkiiratas2(int fsegedvektor[2][MMERET*2])
+{
+	for (int i = 0; i < MMERET*2; i++)
+	{
+		for (int j = 0; j < 2; j++)
+			printf("%d ",fsegedvektor[j][i]);
+		printf("\n");
+	}
+}
+
+int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2])
 {
 	for (int i = 0; i < MMERET; i++)
 	{
@@ -68,17 +81,7 @@ int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
 				{
 					return 1;
 				}
-				else
-				{
-					for (int k = 0; k < MMERET*2; k++)
-					{
-						if (fmatrix[0][i] == fsegedvektor[k])
-							return 1;
-					}
-					
-				}
 			}
-			
 	}
 	return 0;
 }
@@ -93,19 +96,20 @@ int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
 						fmatrix[i][j] = k;
 }*/
 
-void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
+void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2])
 {
-	for (int k = 1; k < MMERET*2; k++)
-		if (fsegedvektor[k] != 0)
+	for (int k = 0; k < MMERET*2; k++)
+		if (fsegedvektor[1][k] != 0)
 			for (int i = 0; i < MMERET; i++)
 				for (int j = 0; j < MMERET; j++)
-					if ((fmatrix[i][j] == fsegedvektor[k]) && (fmatrix[i][j] != 0))
-						fmatrix[i][j] = k;
+					if ((fmatrix[i][j] != 0) && (fmatrix[i][j] == fsegedvektor[1][k]))
+						fmatrix[i][j] = fsegedvektor[0][k];
 }
 
-void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
+void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2])
 {
 	int clusterszam = 1;
+	int unioszam = 0;
 	for (int i=0; i < MMERET; i++)
 		for (int j=0; j < MMERET; j++)
 			if (fmatrix[i][j]) 
@@ -123,29 +127,37 @@ void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
 						fmatrix[i][j] = max(up,left);       // whichever is nonzero is labelled
 						break;
 	  
-					case 2:                              	// this site binds two clusters
-						if (up <= left)
-						{
-							fmatrix[i][j] = up;
-							fsegedvektor[up] = left;
-						} 
+					case 2:     
+						if (up != left)						// this site binds two clusters
+							if (up < left)
+							{
+								fmatrix[i][j] = up;
+								fsegedvektor[0][unioszam] = up;
+								fsegedvektor[1][unioszam] = left;
+								unioszam++;
+							} 
+							else
+							{
+								fmatrix[i][j] = left;
+								fsegedvektor[0][unioszam] = left;
+								fsegedvektor[1][unioszam] = up;
+								unioszam++;
+							}
 						else
-						{
-							fmatrix[i][j] = left;
-							fsegedvektor[left] = up;
-						}
+							fmatrix[i][j] = up;
 						break;
 				}
 	
 			}
 }
 
-void vektorfeltoltes(int fvektor[MMERET])
+void vektorfeltoltes(int fvektor[2][MMERET*2])
 {
-	for (int i = 0; i < MMERET; i++)
-	{
-		fvektor[i] = 0;
-	}
+	for (int j = 0; j < 2; j++)
+		for (int i = 0; i < MMERET*2; i++)
+		{
+			fvektor[j][i] = 0;
+		}
 	
 }
 
