@@ -20,7 +20,7 @@ void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2]);
 
 void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2]);
 
-int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2]);
+int eldont(int fmatrix[MMERET][MMERET]);
 
 void matrixkiiratas2(int fsegedvektor[2][MMERET*2]);
 
@@ -35,24 +35,25 @@ int main(void)
 	 
 	//matrixfeltoltes(matrix,p);
 	//matrixkiiratas(matrix);
-	for (float j = 0; j < 10; j++)
+	for (int j = 0; j < 10; j++)
 	{
 		atmente = 0;
-		float p = j/10;
+		float p = (float)j/10;
 		for (int i = 0; i < ismetles; i++)
 		{
 			vektorfeltoltes(segedvektor);
 			matrixfeltoltes(matrix,p);
-			matrixkiiratas(matrix);
+			printf("Kezdő mátrix %.1f szórásvalószínűség mellett:\n",p);matrixkiiratas(matrix);
 			bejaras(matrix,segedvektor);
-			matrixkiiratas(matrix);
+			printf("Cluster mátrix:\n");matrixkiiratas(matrix);
 			clusterjoin(matrix,segedvektor);
-			atmente += eldont(matrix,segedvektor);
-			matrixkiiratas(matrix);
-			matrixkiiratas2(segedvektor);
+			printf("Clusterjoined mátrix:\n");matrixkiiratas(matrix);
+			printf("Segédvektorunk:\n");matrixkiiratas2(segedvektor);
+			atmente += eldont(matrix);
+			printf("Eddig ennyi probálkozás sikerült: %d\n",atmente);
 		}
 		valosz = (float)atmente / (float)ismetles * 100;
-		printf("Sikeres átjárások %.1f szórásvalószínűség mellett: %.2f szazalek \n",p,valosz);
+		printf("Sikeres átjárások %.1f szórásvalószínűség mellett: %.2f szazalek \n\n\n",p,valosz);
 		fprintf( fp, "%.2f %.2f\n", p, valosz);
 	}
 	
@@ -70,31 +71,23 @@ void matrixkiiratas2(int fsegedvektor[2][MMERET*2])
 	}
 }
 
-int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2])
+int eldont(int fmatrix[MMERET][MMERET])
 {
 	for (int i = 0; i < MMERET; i++)
 	{
 		if (fmatrix[0][i] != 0)
-			for (int j = 0; i < MMERET; j++)
+		{
+			for (int j = 0; j < MMERET; j++)
 			{
 				if (fmatrix[MMERET-1][j] == fmatrix[0][i])
 				{
 					return 1;
 				}
 			}
+		}
 	}
 	return 0;
 }
-
-/*void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
-{
-	for (int i=0; i < MMERET; i++)
-		for (int j=0; j < MMERET; j++)
-			if (fmatrix[i][j])
-				for (int k = 1; k < MMERET; k++)
-					if ((fmatrix[i][j] == fsegedvektor[k]) && (fmatrix[i][j] != 0))
-						fmatrix[i][j] = k;
-}*/
 
 void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[2][MMERET*2])
 {
