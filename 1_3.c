@@ -18,7 +18,9 @@ void vektorfeltoltes(int fvektor[MMERET]);
 
 void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2]);
 
-//void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2]);
+void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2]);
+
+int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2]);
 
 int main(void) 
 {
@@ -42,7 +44,8 @@ int main(void)
 			matrixkiiratas(matrix);
 			bejaras(matrix,segedvektor);
 			matrixkiiratas(matrix);
-		//	clusterjoin(matrix,segedvektor);
+			atmente += eldont(matrix,segedvektor);
+			clusterjoin(matrix,segedvektor);
 			matrixkiiratas(matrix);
 		}
 		seged = atmente;
@@ -51,6 +54,32 @@ int main(void)
 		fprintf( fp, "%.2f %.2f\n", p, valosz);
 	}
 	fclose(fp);
+	return 0;
+}
+
+int eldont(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
+{
+	for (int i = 0; i < MMERET; i++)
+	{
+		if (fmatrix[0][i] != 0)
+			for (int j = 0; i < MMERET; j++)
+			{
+				if (fmatrix[MMERET-1][j] == fmatrix[0][i])
+				{
+					return 1;
+				}
+				else
+				{
+					for (int k = 0; k < MMERET*2; k++)
+					{
+						if (fmatrix[0][i] == fsegedvektor[k])
+							return 1;
+					}
+					
+				}
+			}
+			
+	}
 	return 0;
 }
 
@@ -64,7 +93,7 @@ int main(void)
 						fmatrix[i][j] = k;
 }*/
 
-/*void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
+void clusterjoin(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
 {
 	for (int k = 1; k < MMERET*2; k++)
 		if (fsegedvektor[k] != 0)
@@ -72,7 +101,7 @@ int main(void)
 				for (int j = 0; j < MMERET; j++)
 					if ((fmatrix[i][j] == fsegedvektor[k]) && (fmatrix[i][j] != 0))
 						fmatrix[i][j] = k;
-}*/
+}
 
 void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
 {
@@ -95,8 +124,16 @@ void bejaras(int fmatrix[MMERET][MMERET], int fsegedvektor[MMERET*2])
 						break;
 	  
 					case 2:                              	// this site binds two clusters
-						fmatrix[i][j] = up;
-						fsegedvektor[left] = up;
+						if (up <= left)
+						{
+							fmatrix[i][j] = up;
+							fsegedvektor[up] = left;
+						} 
+						else
+						{
+							fmatrix[i][j] = left;
+							fsegedvektor[left] = up;
+						}
 						break;
 				}
 	
