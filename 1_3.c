@@ -6,7 +6,8 @@
 
 #define MMERET 10// tábla méret
 //#define p 0.3 // p valószínűség
-#define ismetles 1
+#define ismetles 1000
+#define szorasfinomsag 100
 
 #define max(a,b) (a>b?a:b)
 
@@ -35,25 +36,25 @@ int main(void)
 	 
 	//matrixfeltoltes(matrix,p);
 	//matrixkiiratas(matrix);
-	for (int j = 0; j < 10; j++)
+	for (int j = 0; j < szorasfinomsag; j++)
 	{
 		atmente = 0;
-		float p = (float)j/10;
+		float p = (float)j/szorasfinomsag;
 		for (int i = 0; i < ismetles; i++)
 		{
 			vektorfeltoltes(segedvektor);
 			matrixfeltoltes(matrix,p);
-			printf("Kezdő mátrix %.1f szórásvalószínűség mellett:\n",p);matrixkiiratas(matrix);
+			//printf("Kezdő mátrix %.1f szórásvalószínűség mellett:\n",p);matrixkiiratas(matrix);
 			bejaras(matrix,segedvektor);
-			printf("Cluster mátrix:\n");matrixkiiratas(matrix);
+			//printf("Cluster mátrix:\n");matrixkiiratas(matrix);
 			clusterjoin(matrix,segedvektor);
-			printf("Clusterjoined mátrix:\n");matrixkiiratas(matrix);
-			printf("Segédvektorunk:\n");matrixkiiratas2(segedvektor);
+			//printf("Clusterjoined mátrix:\n");matrixkiiratas(matrix);
+			//printf("Segédvektorunk:\n");matrixkiiratas2(segedvektor);
 			atmente += eldont(matrix);
-			printf("Eddig ennyi probálkozás sikerült: %d\n",atmente);
+			//printf("Eddig ennyi probálkozás sikerült: %d\n",atmente);
 		}
 		valosz = (float)atmente / (float)ismetles * 100;
-		printf("Sikeres átjárások %.1f szórásvalószínűség mellett: %.2f szazalek \n\n\n",p,valosz);
+		printf("Sikeres átjárások %.2f szórásvalószínűség mellett: %.2f szazalek \n",p,valosz);
 		fprintf( fp, "%.2f %.2f\n", p, valosz);
 	}
 	
